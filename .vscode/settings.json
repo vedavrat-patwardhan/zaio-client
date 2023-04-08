@@ -19,5 +19,8 @@
   "cSpell.words": ["daisyui", "Tryyon"],
   "[xml]": {
     "editor.defaultFormatter": "redhat.vscode-xml"
+  },
+  "[postcss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   } // Don't run prettier for files listed in .gitignore
 }
