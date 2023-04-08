@@ -11,4 +11,7 @@ module.exports = withBundleAnalyzer({
   trailingSlash: true,
   basePath: '',
   reactStrictMode: true,
+  env: {
+    HOST_API_KEY: 'https://zaio-server.onrender.com',
+  },
 });

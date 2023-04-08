@@ -4,38 +4,53 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 
+interface EventI {
+  title: string;
+  description: string;
+  type: string;
+  duration: number;
+  start: string;
+  end: string;
+}
+
 const Schedule = () => {
   // Events data
-  const events = [
-    {
-      title: 'Event 1',
-      start: '2023-04-01T10:00:00',
-      end: '2023-04-01T12:00:00',
-    },
-    {
-      title: 'Event 2',
-      start: '2023-04-05T14:00:00',
-      end: '2023-04-05T16:00:00',
-    },
-    // Add more events as needed
-  ];
+  const [events, setEvents] = useState<EventI[]>([]);
+  const [currentMonth, setCurrentMonth] = useState<number>(
+    new Date().getMonth() + 1
+  );
+  const fullCalendarRef = useRef<FullCalendar>(null);
+  useEffect(() => {
+    console.log('month', currentMonth);
+    axios
+      .get(`${process.env.HOST_API_KEY}/v1/event/${currentMonth}`)
+      .then((response) => {
+        setEvents(response.data.data);
+      })
+      .catch((err) => console.error(err));
+  }, [currentMonth]);
 
   const eventContent = (arg: any) => {
-    console.log('arg', arg);
     return (
       <div className="form-control w-full">
-        <label className="label cursor-pointer">
-          <span className="label-text">{arg.event.title}</span>
+        <label
+          className="label  cursor-pointer  hover:bg-black hover:text-white"
+          key={arg.event.title + arg.event.startStr}
+        >
+          <span className="label-text w-5/6 truncate text-inherit">
+            {arg.event.title}
+          </span>
           <input
             type="checkbox"
             readOnly
             checked={
-              new Date().getTime() > new Date(arg.event.endStr).getTime()
+              new Date().getTime() > new Date(arg.event.startStr).getTime()
             }
             className="checkbox-warning checkbox"
           />
@@ -47,13 +62,39 @@ const Schedule = () => {
   return (
     <Main meta={<Meta title="Schedule" description="Schedule page" />}>
       <FullCalendar
+        ref={fullCalendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         headerToolbar={{
-          start: 'prev',
+          start: 'customPrev',
           center: 'title',
-          end: 'next',
+          end: 'customNext',
         }}
+        customButtons={{
+          customPrev: {
+            text: 'Prev',
+            click() {
+              fullCalendarRef.current?.getApi().prev();
+              if (currentMonth !== 1) {
+                setCurrentMonth((prevMonth) => prevMonth - 1);
+              } else {
+                setCurrentMonth(12);
+              }
+            },
+          },
+          customNext: {
+            text: 'Next',
+            click() {
+              fullCalendarRef.current?.getApi().next();
+              if (currentMonth !== 12) {
+                setCurrentMonth((prevMonth) => prevMonth + 1);
+              } else {
+                setCurrentMonth(1);
+              }
+            },
+          },
+        }}
+        dayMaxEvents={4}
         events={events}
         eventContent={eventContent}
         height="100vh"

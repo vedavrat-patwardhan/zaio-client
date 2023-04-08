@@ -1,5 +1,6 @@
 import 'react-toastify/dist/ReactToastify.css';
 
+import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
@@ -38,9 +39,7 @@ const Enroll = () => {
           value={values.course || 'Pick a course'}
           onChange={handleChange}
         >
-          <option disabled selected>
-            Pick a course
-          </option>
+          <option disabled>Pick a course</option>
           {courses.map((course) => (
             <option key={course}>{course}</option>
           ))}
@@ -52,9 +51,7 @@ const Enroll = () => {
           value={values.hoursCommitted || 'Pick hours to commit'}
           onChange={handleChange}
         >
-          <option disabled selected>
-            Pick hours to commit
-          </option>
+          <option disabled>Pick hours to commit</option>
           {hours.map((hour) => (
             <option key={hour}>{hour}</option>
           ))}
@@ -66,7 +63,18 @@ const Enroll = () => {
             if (Object.values(values).some((val) => val === '')) {
               notify();
             } else {
-              push('/schedule');
+              axios
+                .post(`${process.env.HOST_API_KEY}/v1/event/create`, {
+                  title: values.course,
+                  description: 'Java lecture',
+                  type: 'Video',
+                  duration: +values.hoursCommitted.match(/\d+/)[0],
+                  date: new Date(),
+                })
+                .then(() => {
+                  push('/schedule');
+                })
+                .catch((err) => console.error(err));
             }
           }}
         >
