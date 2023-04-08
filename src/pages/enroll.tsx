@@ -22,7 +22,7 @@ const Enroll = () => {
   };
   const { values, handleChange } = useForm(initialValues);
   useEffect(() => {
-    // axios call to fetch avaialble courses
+    // axios call to fetch available courses
     setCourses(['Java']);
     setHours(['2 hours per day', ' 4 hours per day', '6 hours per day']);
   }, []);

@@ -8,6 +8,10 @@
   box-sizing: border-box;
 }
 
+.fc-daygrid-event-harness-abs{
+ position: absolute;
+}
+
 .content p {
   @apply my-6;
 }

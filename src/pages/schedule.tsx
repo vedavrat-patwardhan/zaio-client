@@ -93,7 +93,9 @@ const Schedule = () => {
             },
           },
         }}
+        dayMaxEventRows={4}
         dayMaxEvents={4}
+        eventMaxStack={4}
         events={events}
         eventContent={eventContent}
         height="100vh"
