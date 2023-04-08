@@ -27,7 +27,6 @@ const Schedule = () => {
   );
   const fullCalendarRef = useRef<FullCalendar>(null);
   useEffect(() => {
-    console.log('month', currentMonth);
     axios
       .get(`${process.env.HOST_API_KEY}/v1/event/${currentMonth}`)
       .then((response) => {
